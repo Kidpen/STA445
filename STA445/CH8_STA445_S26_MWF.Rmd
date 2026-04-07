@@ -1,0 +1,64 @@
+Chapter 8 notes
+
+
+Vectors:
+```{r}
+aa <- c(9, 3, 2.1)
+aa
+```
+```{r}
+34:83
+```
+```{r}
+seq(from = 10, to = 100, by=3)
+```
+```{r}
+seq(10, 100, 3)
+```
+```{r}
+seq(10, 50, length.out=100)
+```
+
+
+```{r}
+rep(8, 6)
+rep(c(5, 2, 3), 10)
+rep(c(5, 2, 3), each=10)
+```
+```{r}
+bb <- 101:150
+```
+
+Extract elements
+```{r}
+bb[7]
+bb[c(7, 3)]
+bb[-5]
+```
+```{r}
+bb[-1*1:20]
+```
+Matrices
+
+```{r}
+(Keanu <- matrix(1:12, nrow=4, ncol=3, byrow=TRUE))
+```
+Extract elements of the matrix.
+
+```{r}
+Keanu[3, 2]
+Keanu[3,]
+Keanu[,2]
+Keanu[,c(2, 3)]
+
+```
+```{r}
+colnames(Keanu) <- c("Trinity", "Morpheus", "Neo")
+
+Keanu
+```
+```{r}
+Keanu[,"Neo"]
+
+```
+

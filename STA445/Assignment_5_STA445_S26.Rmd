@@ -1,0 +1,131 @@
+---
+geometry: left=0.8in,right=0.8in,top=0.8in,bottom=0.8in
+fontsize: 11pt
+title: "STA 445 S26 Assignment 5"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r include=FALSE}
+library(tidyverse)
+library(mosaicData)
+```
+
+
+## Problem 1
+Convert the following to date or date/time objects.
+
+a. September 13, 2010.
+
+b. Sept 13, 2010.
+
+c. Sep 13, 2010.
+
+d. S 13, 2010. Comment on the month abbreviation needs.
+
+e. 07-Dec-1941.
+
+f. 1-5-1998. Comment on why you might be wrong.
+
+g. 21-5-1998. Comment on why you know you are correct.
+
+h. 2020-May-5 10:30 am
+
+i. 2020-May-5 10:30 am PDT (ex Seattle)
+
+j. 2020-May-5 10:30 am AST (ex Puerto Rico)
+
+```{r}
+mdy("September 13, 2010") #a
+mdy("Sept 13, 2010") #b, month abbreviation is invalid
+mdy("Sep 13, 2010") #c
+mdy("S 13, 2010") #d, month abbreviation is invalid
+dmy("07-Dec-1941") #e
+mdy("1-5-1998") #f this could be in a dmy format since 1 and 5 are both under 12
+dmy("21-5-1998") # g 21 is over 12 and can only be the day
+ymd_hm("2020-May-5 10:30 am") #h
+ymd_hm("2020-May-5 10:30 am", tz="US/Pacific") #i
+ymd_hm("2020-May-5 10:30 am", tz="America/Puerto_Rico") #j
+```
+
+
+## Problem 2
+
+Using just your date of birth (ex Sep 7, 1998) and today's date calculate the following:
+
+a. Calculate the date of your 64th birthday.
+
+b. Calculate your current age (in years). 
+
+c. Using your result in part (b), calculate the date of your next birthday.
+
+d. The number of _days_ until your next birthday.
+
+e. The number of _months_ and _days_ until your next birthday.
+
+```{r}
+bday <- mdy("January 18 2005")
+today <- today()
+today
+bday + 365.25*64 #a
+age <- as.period(bday %--% today, unit="seconds")/years(1) #b
+age
+next_bday <- bday + years(floor(age)) + years(1) #c
+next_bday
+as.period(today %--% next_bday, unit="days") #d
+as.period(today %--% next_bday) #e
+```
+
+
+## Problem 3
+
+Suppose you have arranged for a phone call to be at 3 pm on May 8, 2015 at Arizona time. However, the recipient will be in Auckland, NZ. What time will it be there? 
+
+```{r}
+mdy_hm("May 8, 2015 3:00pm", tz="US/Arizona") %>% with_tz(tzone="NZ")
+```
+It will be 10AM on May 9 in New Zealand.
+
+## Problem 4
+
+It turns out there is some interesting periodicity regarding the number of births on particular days of the year.
+
+a. Using the `mosaicData` package, load the data set `Births78` which records the number of children born on each day in the United States in 1978. Because this problem is intended to show how to calculate the information using the `date`, remove all the columns *except* `date` and `births`. 
+
+```{r}
+birthdata <- 
+  data.frame(date = Births78$date, births = Births78$births)
+head(birthdata)
+```
+
+
+b. Graph the number of `births` vs the `date` with date on the x-axis. What stands out to you? Why do you think we have this trend?
+
+```{r}
+ggplot(data=birthdata, aes(x=date,y=births)) +
+  geom_point()
+```
+
+This is a pretty crazy graph. It looks like for any given period, there are two distinct categories of days, being either high volume days or low volume with nothing in between, with the high volume days being more numerous. There is also a clear seasonal pattern, peaking around July/August and valleying around May. This would seem to indicate that there is more intimacy around the Fall, October/November, and less around July/August. My best guess for the category difference is that women are more likely to try to induce birth on certain days (not holidays, maybe not weekends) resulting in a lower rate on those days.
+
+c. To test your assumption, we need to figure out the what day of the week each observation is. Use `dplyr::mutate` to add a new column named `dow` that is the day of the week (Monday, Tuesday, etc). This calculation will involve some function in the `lubridate` package and the `date` column.
+
+```{r}
+birthdata <- birthdata %>% mutate(dow = wday(date))
+```
+
+d. Plot the data with the point color being determined by the day of the week variable.
+
+```{r}
+ggplot(data=birthdata, aes(x=date,y=births,color=dow)) +
+  geom_point()
+```
+
+
+
+
+
+
+
+
+
